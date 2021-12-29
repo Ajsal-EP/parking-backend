@@ -2,9 +2,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask,jsonify,request
 from sqlalchemy.sql import expression
+from flask_cors import CORS
 
 # App Initialize
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # SQLite
 app.config ['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///slots.sqlite3'
@@ -110,11 +113,10 @@ def get_all_slots():
     return jsonify(slots)
 
 # Reserve a Slot
-@app.route('/reserve', methods=['POST'])
-def reserve_slot():
-    req = request.get_json(force=True) 
-    reserveSlot(req["slotname"],req["carnumber"],req["owner"])
-    return jsonify("Success",200)
+@app.route('/reserve/<slotname>/<carnumber>/<owner>', methods=["GET"])
+def reserve_slot(slotname,carnumber,owner):
+    reserveSlot(slotname,carnumber,owner)
+    return jsonify("Success")
 
 
 if __name__ == '__main__':
